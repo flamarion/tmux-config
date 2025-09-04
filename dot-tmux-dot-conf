@@ -1,0 +1,92 @@
+# Change prefix from 'Ctrl+B' to 'Ctrl+Space'
+unbind C-b
+set -g prefix C-Space
+bind C-Space send-prefix
+
+
+# Trying UTF8
+#setw -gq utf8 on
+#set -gq status-utf8 on
+
+# Reload shortcut
+bind r source-file ~/.tmux.conf \; display-message "Config reloaded!"
+
+# Ensure that we can use pbcopy with tmux
+set-option -g default-command "reattach-to-user-namespace -l $SHELL"
+
+# Set clipboard copy mode to system clipboard
+bind -T copy-mode-vi v send-keys -X begin-selection
+bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"
+bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"
+
+# For emacs style
+bind -T copy-mode MouseDragEnd1Pane send -X copy-pipe-and-cancel "pbcopy"
+
+# Enable mouse mode
+set -g mouse on
+
+# Set and control session exit behavior
+set -s exit-empty off
+
+# Window and pane indexing starts from 1 instead of 0
+set -g base-index 1
+setw -g pane-base-index 1
+
+# Enable automatic renaming and window title updates
+setw -g automatic-rename on
+set -g set-titles on
+
+# Increase history limit
+set -g history-limit 100000
+
+# Window renumbering when a window is closed
+set -g renumber-windows on
+
+# Pane splitting shortcuts keeping the current path
+bind "\\" split-window -h -c "#{pane_current_path}"
+bind "|" split-window -fh -c "#{pane_current_path}"
+bind "-" split-window -v -c "#{pane_current_path}"
+bind "_" split-window -fv -c "#{pane_current_path}"
+
+# Create a new window with the current directory
+bind c new-window -c "#{pane_current_path}"
+
+# Navigation and window management shortcuts
+bind -n C-S-Left swap-window -t -1
+bind -n C-S-Right swap-window -t +1
+bind Space last-window
+
+# Status bar configuration
+set -g status-interval 2
+set -g status-right "#[fg=green,bg=black]#(/opt/homebrew/bin/tmux-mem-cpu-load --colors --interval 2)#[default]"
+set -g status-right-length 60
+set -g status-left-length 20
+set -g window-status-current-style bg=red,fg=white
+
+# Sync panes toggle
+bind e setw synchronize-panes on
+bind E setw synchronize-panes off
+
+# Layout selection
+bind V select-layout even-vertical
+#bind M-V select-layout main-vertical
+bind H select-layout even-horizontal
+#bind M-H select-layout main-horizontal
+bind T select-layout tiled
+
+# New session
+bind-key L command-prompt -p "Enter session name:" "new-session -s '%%'"
+
+# Rename current session
+bind R command-prompt -p "Enter session name:" "rename-session '%%'"
+
+# Set status bar and current window status color, and rename session to 'personal'
+bind P set-option status-style bg=grey,fg=black \; \
+       rename-session personal
+
+# Set status bar and current window status color, and rename session to 'wandb'
+bind W set-option status-style bg=yellow,fg=black \; \
+       rename-session wandb
+## Test
+setw -g monitor-activity on
+set -g visual-activity on
